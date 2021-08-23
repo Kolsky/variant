@@ -2,7 +2,7 @@
 #![allow(unreachable_patterns)]
 use core::marker::PhantomData;
 
-trait Is<T>: Sized {
+pub trait Is<T>: Sized {
     fn mov(self) -> T;
     fn lend(&self) -> &T;
     fn lend_mut(&mut self) -> &mut T;
@@ -38,7 +38,7 @@ pub struct Indexed<T, const I: usize>(T);
 
 struct PhantomIndex<const I: usize>;
 
-trait VArgsErasedOps<const I: usize>: VArgs {
+pub trait VArgsErasedOps<const I: usize>: VArgs {
     type Output;
     fn get(&self) -> Option<&Self::Output>;
     fn get_mut(&mut self) -> Option<&mut Self::Output>;
@@ -145,7 +145,7 @@ vargs_def!(VArgs11 0:T1 I1 1:T2 I2 2:T3 I3 3:T4 I4 4:T5 I5 5:T6 I6 6:T7 I7 7:T8 
 vargs_def!(VArgs12 0:T1 I1 1:T2 I2 2:T3 I3 3:T4 I4 4:T5 I5 5:T6 I6 6:T7 I7 7:T8 I8 8:T9 I9 9:T10 I10 10:T11 I11 11:T12 I12);
 
 pub struct Variant<Args: Tuple> {
-    inner: Args::VArgs,
+    pub inner: Args::VArgs,
 }
 
 impl<Args: Tuple> Variant<Args> {
@@ -165,7 +165,7 @@ impl<Args: Tuple> Variant<Args> {
     }
 }
 
-trait IntoVariant<const I: usize>: Sized {
+pub trait IntoVariant<const I: usize>: Sized {
     fn into_variant<Args: Tuple>(self) -> Variant<Args> where Args::VArgs: From<Indexed<Self, I>> {
         Variant::new(self)
     }
@@ -173,7 +173,7 @@ trait IntoVariant<const I: usize>: Sized {
 
 impl<T, const I: usize> IntoVariant<I> for T {}
 
-trait VariantErasedOps<const I: usize> {
+pub trait VariantErasedOps<const I: usize> {
     type VArgs;
     type Output;
     fn get<T>(&self) -> Option<&T> where Self::VArgs: From<Indexed<T, I>>, Self::Output: Is<T>;
